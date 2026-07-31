@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sulozeqi-BackEnd")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64bf5f72ca58de8cfc2b8f1a18d0baea4b850e41")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sulozeqi-BackEnd")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sulozeqi-BackEnd")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

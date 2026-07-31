@@ -48,7 +48,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
 
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new BaseApiResponse<object>
+        var response = new BaseResponse<object>
         {
             Success = false,
             Message = message,

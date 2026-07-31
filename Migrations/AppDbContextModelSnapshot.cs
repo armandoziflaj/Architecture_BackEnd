@@ -52,6 +52,50 @@ namespace Sulozeqi_BackEnd.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Sulozeqi_BackEnd.Models.ContactInquiry", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("DateTimeCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateTimeUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<long>("RowVersion")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContactInquiries");
+                });
+
             modelBuilder.Entity("Sulozeqi_BackEnd.Models.Project", b =>
                 {
                     b.Property<long>("Id")
@@ -92,16 +136,6 @@ namespace Sulozeqi_BackEnd.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -156,6 +190,51 @@ namespace Sulozeqi_BackEnd.Migrations
                     b.ToTable("ProjectPhotos");
                 });
 
+            modelBuilder.Entity("Sulozeqi_BackEnd.Models.ProjectTranslation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("DateTimeCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateTimeUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<long>("ProjectId")
+                        .HasColumnType("bigint");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectTranslations");
+                });
+
             modelBuilder.Entity("Sulozeqi_BackEnd.Models.Project", b =>
                 {
                     b.HasOne("Sulozeqi_BackEnd.Models.Category", "Category")
@@ -176,6 +255,17 @@ namespace Sulozeqi_BackEnd.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("Sulozeqi_BackEnd.Models.ProjectTranslation", b =>
+                {
+                    b.HasOne("Sulozeqi_BackEnd.Models.Project", "Project")
+                        .WithMany("Translations")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Sulozeqi_BackEnd.Models.Category", b =>
                 {
                     b.Navigation("Projects");
@@ -184,6 +274,8 @@ namespace Sulozeqi_BackEnd.Migrations
             modelBuilder.Entity("Sulozeqi_BackEnd.Models.Project", b =>
                 {
                     b.Navigation("Photos");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

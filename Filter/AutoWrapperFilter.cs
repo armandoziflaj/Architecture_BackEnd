@@ -11,13 +11,13 @@ public class AutoWrapperFilter : IAsyncResultFilter
         if (context.Result is ObjectResult objectResult)
         {
             var resultType = objectResult.Value?.GetType();
-            if (resultType != null && resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(BaseApiResponse<>))
+            if (resultType != null && resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(BaseResponse<>))
             {
                 await next();
                 return;
             }
             
-            var wrappedResponse = new BaseApiResponse<object>
+            var wrappedResponse = new BaseResponse<object>
             {
                 Success = true,
                 Message = "Success",
@@ -26,7 +26,21 @@ public class AutoWrapperFilter : IAsyncResultFilter
 
             objectResult.Value = wrappedResponse;
         }
+        else if (context.Result is StatusCodeResult statusCodeResult)
+        {
+            var wrappedResponse = new BaseResponse<object>
+            {
+                Success = statusCodeResult.StatusCode is >= 200 and < 300,
+                Message = statusCodeResult.StatusCode is >= 200 and < 300 ? "Success" : "Error",
+                Data = null
+            };
 
+            context.Result = new ObjectResult(wrappedResponse)
+            {
+                StatusCode = statusCodeResult.StatusCode
+            };
+        }
+        
         await next();
     }
 }

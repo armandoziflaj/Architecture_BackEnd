@@ -1,5 +1,6 @@
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/appsettings.Development.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/appsettings.json
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd.staticwebassets.runtime.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd.staticwebassets.endpoints.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd.deps.json
@@ -7,6 +8,7 @@
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Sulozeqi-BackEnd.pdb
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Humanizer.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.AspNetCore.OpenApi.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.Build.Framework.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.CodeAnalysis.dll
@@ -20,6 +22,12 @@
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Design.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Relational.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.Extensions.DependencyModel.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.OpenApi.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Microsoft.VisualStudio.SolutionPersistence.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/Mono.TextTemplating.dll
@@ -32,6 +40,7 @@
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/System.Composition.Hosting.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/System.Composition.Runtime.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/System.Composition.TypedParts.dll
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/de/Microsoft.CodeAnalysis.resources.dll
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/bin/Debug/net10.0/es/Microsoft.CodeAnalysis.resources.dll
@@ -105,6 +114,7 @@
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/Sulozeqi-BackEnd.csproj.CoreCompileInputs.cache
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/Sulozeqi-BackEnd.MvcApplicationPartsAssemblyInfo.cs
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/Sulozeqi-BackEnd.MvcApplicationPartsAssemblyInfo.cache
+/Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/Sulozeqi-BackEnd.sourcelink.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/rjimswa.dswa.cache.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
 /Users/armandoziflaj/Desktop/Sulozeqi-BackEnd/Sulozeqi-BackEnd/Sulozeqi-BackEnd/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
