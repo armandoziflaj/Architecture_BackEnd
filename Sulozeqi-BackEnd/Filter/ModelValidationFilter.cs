@@ -11,7 +11,7 @@ public class ModelValidationFilter : IActionFilter
         foreach (var argument in context.ActionArguments.Values)
         {
             if (argument != null) continue;
-            context.Result = new BadRequestObjectResult(new BaseApiResponse<object>
+            context.Result = new BadRequestObjectResult(new BaseResponse<object>
             {
                 Success = false,
                 Message = "The request payload cannot be completely null or empty.",
