@@ -2,17 +2,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Sulozeqi_BackEnd.Models;
+using Sulozeqi_BackEnd.Requests;
 using Sulozeqi_BackEnd.Services;
 
 namespace Sulozeqi_BackEnd.Controller;
 
-[Authorize]
+//[Authorize]
 [EnableRateLimiting("ContactFormPolicy")]
 public class ContactInquiriesController(ContactInquiryService inquiryService) : BaseApiController
 { 
     [HttpPost("submit")]
     [AllowAnonymous]
-    public async Task<IActionResult> Submit([FromBody] ContactInquiry inquiry)
+    public async Task<IActionResult> Submit([FromBody] ContactInquiryRequest inquiry)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 

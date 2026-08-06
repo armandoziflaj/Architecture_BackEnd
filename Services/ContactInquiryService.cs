@@ -2,18 +2,25 @@
 using Microsoft.EntityFrameworkCore;
 using Sulozeqi_BackEnd.ExceptionMiddleware;
 using Sulozeqi_BackEnd.Models;
+using Sulozeqi_BackEnd.Requests;
 using Sulozeqi_BackEnd.Responses;
 
 namespace Sulozeqi_BackEnd.Services;
 
 public class ContactInquiryService(AppDbContext context) : BaseService<ContactInquiry>(context)
 {
-    public async Task SubmitInquiryAsync(ContactInquiry inquiry)
+    public async Task SubmitInquiryAsync(ContactInquiryRequest request)
     {
-        inquiry.DateTimeCreated = DateTime.UtcNow;
-        inquiry.DateTimeUpdated = DateTime.UtcNow;
-        inquiry.IsRead = false;
-        
+        var inquiry = new ContactInquiry
+        {
+            DateTimeCreated = DateTime.UtcNow,
+            DateTimeUpdated = DateTime.UtcNow,
+            IsRead = false,
+            FullName = request.FullName,
+            Email = request.Email,
+            Message = request.Message,
+        };
+
         Context.ContactInquiries.Add(inquiry);
         await Context.SaveChangesAsync();
     }

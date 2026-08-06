@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Sulozeqi_BackEnd.ExceptionMiddleware;
 using Sulozeqi_BackEnd.Filter;
+using Sulozeqi_BackEnd.Middleware;
 using Sulozeqi_BackEnd.Models;
 using Sulozeqi_BackEnd.Services;
 
@@ -18,6 +19,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<ContactInquiryService>();
+
+builder.Services.AddSingleton<VisitorCounterService>();
+builder.Services.AddHostedService<VisitorCountUpdateService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(options =>
@@ -79,6 +83,7 @@ builder.Services.AddRateLimiter(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<VisitorCounterMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

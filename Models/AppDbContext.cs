@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProjectTranslation> ProjectTranslations { get; set; }
     public DbSet<ProjectPhoto> ProjectPhotos { get; set; }
     public DbSet<ContactInquiry> ContactInquiries { get; set; }
+    public DbSet<VisitorCounter> VisitorCounters { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -26,4 +27,3 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<ProjectPhoto>().Property(pp => pp.RowVersion).IsRowVersion();
     }
 }
-
