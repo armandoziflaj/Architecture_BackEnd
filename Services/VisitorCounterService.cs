@@ -22,9 +22,10 @@ public class VisitorCounterService
     }
 }
 
-public class VisitorCountUpdateService(IServiceProvider serviceProvider) : IHostedService, IDisposable
+public class VisitorCountUpdateService(IServiceProvider serviceProvider,IConfiguration configuration, ILogger<VisitorCountUpdateService> logger) : IHostedService, IDisposable
 {
     private Timer? _timer;
+    private readonly long _updateFrequency = configuration.GetValue("VisitorCounterSettings:UpdateFrequencyMinutes", 1);
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -33,10 +34,11 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider) : IHost
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var counterService = scope.ServiceProvider.GetRequiredService<VisitorCounterService>();
             var initialCount = dbContext.VisitorCounters.FirstOrDefault()?.Count ?? 0;
+            logger.LogInformation("VisitorCountUpdateService started. Initial count loaded: {InitialCount}", initialCount); 
             counterService.SetInitialCount(initialCount);
         }
 
-        _timer = new Timer(UpdateVisitorCountInDatabase, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+        _timer = new Timer(UpdateVisitorCountInDatabase, null, TimeSpan.FromMinutes(_updateFrequency), TimeSpan.FromMinutes(_updateFrequency));
         return Task.CompletedTask;
     }
     
@@ -60,6 +62,7 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider) : IHost
             counter.LastUpdated = DateTime.UtcNow;
         }
         dbContext.SaveChanges();
+        logger.LogInformation("Successfully saved total visitor count to database: {TotalCount}", totalCount);
     }
     
     public Task StopAsync(CancellationToken cancellationToken)

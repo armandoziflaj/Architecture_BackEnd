@@ -8,11 +8,12 @@ using Sulozeqi_BackEnd.Services;
 namespace Sulozeqi_BackEnd.Controller;
 
 //[Authorize]
-[EnableRateLimiting("ContactFormPolicy")]
+
 public class ContactInquiriesController(ContactInquiryService inquiryService) : BaseApiController
 { 
     [HttpPost("submit")]
     [AllowAnonymous]
+    [EnableRateLimiting("ContactFormPolicy")]
     public async Task<IActionResult> Submit([FromBody] ContactInquiryRequest inquiry)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

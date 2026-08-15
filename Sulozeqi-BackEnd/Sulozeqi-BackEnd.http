@@ -1,6 +1,0 @@
-@Sulozeqi_BackEnd_HostAddress = http://localhost:5188
-
-GET {{Sulozeqi_BackEnd_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
