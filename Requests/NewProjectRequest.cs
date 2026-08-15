@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace Sulozeqi_BackEnd.Requests;
 
@@ -15,11 +16,12 @@ public class ProjectTranslationDto
     public string Description { get; set; } = string.Empty;
 }
 
-public class ExistingPhotoDto
+public class ProjectPhotoSpecDto
 {
-    public long Id { get; set; }
-    public string ImageUrl { get; set; } = string.Empty;
+    public long? Id { get; set; }
     public int DisplayOrder { get; set; }
+    public int? NewPhotoIndex { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
 public class CreateProjectDto
@@ -38,10 +40,11 @@ public class CreateProjectDto
     public long? CategoryId { get; set; }
 
     public List<ProjectTranslationDto> Translations { get; set; } = [];
+    
+    public List<ProjectPhotoSpecDto> Photos { get; set; } = [];
 
-    public List<IFormFile> Photos { get; set; } = [];
-
-    public List<int> DisplayOrders { get; set; } = [];
+    [JsonIgnore]
+    public List<IFormFile> NewPhotos { get; set; } = [];
 }
 
 public class UpdateProjectDto
@@ -63,9 +66,8 @@ public class UpdateProjectDto
 
     public List<ProjectTranslationDto> Translations { get; set; } = [];
 
-    public List<ExistingPhotoDto> RetainedPhotos { get; set; } = [];
+    public List<ProjectPhotoSpecDto> Photos { get; set; } = [];
 
+    [JsonIgnore]
     public List<IFormFile> NewPhotos { get; set; } = [];
-
-    public List<int> NewPhotoDisplayOrders { get; set; } = [];
 }

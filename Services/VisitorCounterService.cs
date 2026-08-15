@@ -33,7 +33,7 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider,IConfigu
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var counterService = scope.ServiceProvider.GetRequiredService<VisitorCounterService>();
-            var initialCount = dbContext.VisitorCounters.FirstOrDefault()?.Count ?? 0;
+            var initialCount = dbContext.VisitorCounters.SingleOrDefault()?.Count ?? 0;
             logger.LogInformation("VisitorCountUpdateService started. Initial count loaded: {InitialCount}", initialCount); 
             counterService.SetInitialCount(initialCount);
         }
@@ -50,7 +50,7 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider,IConfigu
 
         var totalCount = counterService.GetCount();
 
-        var counter = dbContext.VisitorCounters.FirstOrDefault();
+        var counter = dbContext.VisitorCounters.SingleOrDefault();
         if (counter == null)
         {
             counter = new VisitorCounter { Count = totalCount, LastUpdated = DateTime.UtcNow };

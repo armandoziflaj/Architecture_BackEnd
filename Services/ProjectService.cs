@@ -42,7 +42,7 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
                           .AsNoTracking()
                           .Include(p => p.Translations)
                           .Include(p => p.Photos)
-                          .FirstOrDefaultAsync(p => p.Id == id) 
+                          .FirstOrDefaultAsync(p => p.Id == id)
                       ?? throw new NotFoundException($"Project with ID {id} does not exist.");
 
         return new ProjectDetailedResponse
@@ -77,124 +77,128 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
         };
     }
 
-    public async Task<long> CreateProjectAsync(CreateProjectDto request)
+    public async Task<long> CreateProjectAsync(CreateProjectDto dto)
     {
-        var project = new Project
-        {
-            Location = request.Location,
-            CompletionYear = request.CompletionYear,
-            Size = request.Size,
-            IsFeatured = request.IsFeatured,
-            CategoryId = request.CategoryId
-        };
+        await using var transaction = await Context.Database.BeginTransactionAsync();
 
-        foreach (var translationDto in request.Translations)
+        try
         {
-            project.Translations.Add(new ProjectTranslation
+            var project = new Project
             {
-                LanguageCode = translationDto.LanguageCode,
-                Title = translationDto.Title,
-                Summary = string.IsNullOrWhiteSpace(translationDto.Description)
-                    ? translationDto.Title
-                    : translationDto.Description
-            });
-        }
+                Location = dto.Location,
+                CompletionYear = dto.CompletionYear,
+                Size = dto.Size,
+                IsFeatured = dto.IsFeatured,
+                CategoryId = dto.CategoryId,
+                Translations = dto.Translations.Select(t => new ProjectTranslation
+                {
+                    LanguageCode = t.LanguageCode,
+                    Title = t.Title,
+                    Summary = string.IsNullOrWhiteSpace(t.Description) ? t.Title : t.Description
+                }).ToList()
+            };
 
-        for (var i = 0; i < request.Photos.Count; i++)
-        {
-            var file = request.Photos[i];
-            if (file.Length == 0) continue;
+            Context.Projects.Add(project);
+            await Context.SaveChangesAsync();
 
-            var imageUrl = await SaveImageFileAsync(file);
-            var displayOrder = (request.DisplayOrders != null && i < request.DisplayOrders.Count)
-                ? request.DisplayOrders[i]
-                : i + 1;
-
-            project.Photos.Add(new ProjectPhoto
+            for (var i = 0; i < dto.Photos.Count; i++)
             {
-                ImageUrl = imageUrl,
-                AltText = $"{request.Location} Project Photo {displayOrder}",
-                DisplayOrder = displayOrder,
-                IsMainCover = (displayOrder == 1)
-            });
+                var photoSpec = dto.Photos[i];
+                var file = dto.NewPhotos[i];
+                var imageUrl = await SaveImageFileAsync(file);
+
+                project.Photos.Add(new ProjectPhoto
+                {
+                    ImageUrl = imageUrl,
+                    AltText = $"{dto.Location} Project Photo {photoSpec.DisplayOrder}",
+                    DisplayOrder = photoSpec.DisplayOrder,
+                    IsMainCover = (photoSpec.DisplayOrder == 1)
+                });
+            }
+
+            await Context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return project.Id;
         }
-
-        Context.Projects.Add(project);
-        await Context.SaveChangesAsync();
-
-        return project.Id;
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task UpdateProjectAsync(UpdateProjectDto dto)
     {
-        var project = await Context.Projects
-            .Include(p => p.Translations)
-            .Include(p => p.Photos)
-            .FirstOrDefaultAsync(p => p.Id == dto.Id);
+        await using var transaction = await Context.Database.BeginTransactionAsync();
 
-        if (project == null)
-            throw new NotFoundException($"Project with ID {dto.Id} not found.");
-
-        project.Location = dto.Location;
-        project.CompletionYear = dto.CompletionYear;
-        project.Size = dto.Size;
-        project.IsFeatured = dto.IsFeatured;
-        project.CategoryId = dto.CategoryId;
-
-        project.Translations.Clear();
-        foreach (var transDto in dto.Translations)
+        try
         {
-            project.Translations.Add(new ProjectTranslation
+            var project = await Context.Projects
+                .Include(p => p.Translations)
+                .Include(p => p.Photos)
+                .FirstOrDefaultAsync(p => p.Id == dto.Id)
+                ?? throw new NotFoundException($"Project with ID {dto.Id} not found.");
+
+            project.Location = dto.Location;
+            project.CompletionYear = dto.CompletionYear;
+            project.Size = dto.Size;
+            project.IsFeatured = dto.IsFeatured;
+            project.CategoryId = dto.CategoryId;
+
+            project.Translations.Clear();
+            foreach (var transDto in dto.Translations)
             {
-                LanguageCode = transDto.LanguageCode,
-                Title = transDto.Title,
-                Summary = transDto.Description
-            });
-        }
-
-        var retainedIds = dto.RetainedPhotos.Select(rp => rp.Id).ToList();
-        var photosToRemove = project.Photos.Where(p => !retainedIds.Contains(p.Id)).ToList();
-
-        foreach (var photo in photosToRemove)
-        {
-            DeleteImageFile(photo.ImageUrl);
-            Context.ProjectPhotos.Remove(photo);
-        }
-
-        foreach (var photo in project.Photos)
-        {
-            var match = dto.RetainedPhotos.FirstOrDefault(rp => rp.Id == photo.Id);
-            if (match != null)
-            {
-                photo.DisplayOrder = match.DisplayOrder;
+                project.Translations.Add(new ProjectTranslation
+                {
+                    LanguageCode = transDto.LanguageCode,
+                    Title = transDto.Title,
+                    Summary = transDto.Description
+                });
             }
-        }
 
-        for (var i = 0; i < dto.NewPhotos.Count; i++)
-        {
-            var file = dto.NewPhotos[i];
-            if (file.Length == 0) continue;
+            var retainedPhotoIds = dto.Photos.Where(p => p.Id.HasValue).Select(p => p.Id!.Value).ToList();
+            var photosToRemove = project.Photos.Where(p => !retainedPhotoIds.Contains(p.Id)).ToList();
 
-            var imageUrl = await SaveImageFileAsync(file);
-            var displayOrder = (dto.NewPhotoDisplayOrders != null && i < dto.NewPhotoDisplayOrders.Count)
-                ? dto.NewPhotoDisplayOrders[i]
-                : i + 100;
-
-            project.Photos.Add(new ProjectPhoto
+            foreach (var photo in photosToRemove)
             {
-                ImageUrl = imageUrl,
-                AltText = $"{dto.Location} Project Photo {displayOrder}",
-                DisplayOrder = displayOrder,
-                IsMainCover = false
-            });
-        }
+                DeleteImageFile(photo.ImageUrl);
+                Context.ProjectPhotos.Remove(photo);
+            }
 
-        foreach (var photo in project.Photos)
+            foreach (var photoSpec in dto.Photos)
+            {
+                if (photoSpec.Id.HasValue)
+                {
+                    var existingPhoto = project.Photos.FirstOrDefault(p => p.Id == photoSpec.Id.Value);
+                    if (existingPhoto != null)
+                    {
+                        existingPhoto.DisplayOrder = photoSpec.DisplayOrder;
+                        existingPhoto.IsMainCover = (photoSpec.DisplayOrder == 1);
+                    }
+                }
+                else if (photoSpec.NewPhotoIndex.HasValue)
+                {
+                    var file = dto.NewPhotos[photoSpec.NewPhotoIndex.Value];
+                    var imageUrl = await SaveImageFileAsync(file);
+                    project.Photos.Add(new ProjectPhoto
+                    {
+                        ImageUrl = imageUrl,
+                        AltText = $"{dto.Location} Project Photo {photoSpec.DisplayOrder}",
+                        DisplayOrder = photoSpec.DisplayOrder,
+                        IsMainCover = (photoSpec.DisplayOrder == 1)
+                    });
+                }
+            }
+
+            await Context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch
         {
-            photo.IsMainCover = (photo.DisplayOrder == 1);
+            await transaction.RollbackAsync();
+            throw;
         }
-
-        await Context.SaveChangesAsync();
     }
 
     public override async Task<bool> DeleteAsync(long id)
