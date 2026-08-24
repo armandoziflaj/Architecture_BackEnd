@@ -15,7 +15,7 @@ public abstract class BaseService<T>(AppDbContext context) where T : CommonData
 
     public virtual async Task<T?> GetByIdAsync(long id)
     {
-        return await Context.Set<T>().FindAsync(id) ?? throw new NotFoundException("The entity you are trying to find does not exist.");;
+        return await Context.Set<T>().FindAsync(id) ?? throw new NotFoundException("The entity you are trying to find does not exist.");
     }
 
     public virtual async Task<bool> DeleteAsync(long id)

@@ -38,13 +38,14 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
                 statusCode = HttpStatusCode.NotFound;
                 message = notFoundEx.Message;
                 break;
-                
-            default:
-                #if DEBUG
-                message = exception.Message;
-                #endif
-                break;
         }
+
+#if DEBUG
+        if (exception is not (BadRequestException or NotFoundException))
+        {
+            message = exception.Message;
+        }
+#endif
 
         context.Response.StatusCode = (int)statusCode;
 

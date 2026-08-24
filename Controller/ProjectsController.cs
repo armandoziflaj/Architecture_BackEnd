@@ -17,7 +17,12 @@ public class ProjectsController (ProjectService projectService) : BaseApiControl
     }
         
     [HttpGet("{id:long}")]
-    public async Task<IActionResult> GetProjectDetailsAsync(long id, [FromHeader(Name = "Accept-Language")] string lang = "en")
+    public Task<IActionResult> GetProjectDetailsAsync(long id, [FromHeader(Name = "Accept-Language")] string? lang)
+    {
+        return GetProjectDetailsInternalAsync(id, lang ?? "en");
+    }
+
+    private async Task<IActionResult> GetProjectDetailsInternalAsync(long id, string lang)
     {
         var catalog = await projectService.GetProjectDetailsAsync(id, lang);
         return Ok(catalog);
@@ -27,27 +32,42 @@ public class ProjectsController (ProjectService projectService) : BaseApiControl
     public async Task<IActionResult> CreateNewProject([FromForm] string projectData, [FromForm] List<IFormFile> newPhotos)
     {
         var dto = JsonSerializer.Deserialize<CreateProjectDto>(projectData, _jsonOptions);
-        if (dto == null) return BadRequest("Invalid project data.");
-        
+        if (dto == null)
+        {
+            return BadRequest("Invalid project data.");
+        }
+
         dto.NewPhotos = newPhotos;
 
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         var projectId = await projectService.CreateProjectAsync(dto);
         return Ok(new { id = projectId });
     }
-    
+
     [HttpPut("{id:long}")]
     public async Task<IActionResult> UpdateProject(long id, [FromForm] string projectData, [FromForm] List<IFormFile> newPhotos)
     {
         var dto = JsonSerializer.Deserialize<UpdateProjectDto>(projectData, _jsonOptions);
-        if (dto == null) return BadRequest("Invalid project data.");
-        
+        if (dto == null)
+        {
+            return BadRequest("Invalid project data.");
+        }
+
         dto.NewPhotos = newPhotos;
 
-        if (id != dto.Id) return BadRequest("Mismatched Project ID.");
+        if (id != dto.Id)
+        {
+            return BadRequest("Mismatched Project ID.");
+        }
 
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         await projectService.UpdateProjectAsync(dto);
         return Ok();

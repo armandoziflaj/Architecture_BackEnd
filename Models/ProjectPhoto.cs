@@ -14,7 +14,7 @@ public class ProjectPhoto : CommonData
 
     public bool IsMainCover { get; set; }
 
-    public int DisplayOrder { get; set; } = 0;
+    public int DisplayOrder { get; set; }
 
     public long ProjectId { get; set; }
 
