@@ -13,7 +13,10 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
         var query = Context.Projects.AsNoTracking();
 
         if (onlyFeatured)
+        {
             query = query.Where(x => x.IsFeatured);
+        }
+            
     
         var projects = await query
             .Include(p => p.Translations)
