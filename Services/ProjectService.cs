@@ -8,10 +8,14 @@ namespace Sulozeqi_BackEnd.Services;
 
 public class ProjectService(AppDbContext context, IWebHostEnvironment environment) : BaseService<Project>(context)
 {
-    public async Task<IEnumerable<ProjectResponse>> GetPortfolioCatalogAsync(string lang = "en")
+    public async Task<IEnumerable<ProjectResponse>> GetPortfolioCatalogAsync(bool onlyFeatured, string lang = "en")
     {
-        var projects = await Context.Projects
-            .AsNoTracking()
+        var query = Context.Projects.AsNoTracking();
+
+        if (onlyFeatured)
+            query = query.Where(x => x.IsFeatured);
+    
+        var projects = await query
             .Include(p => p.Translations)
             .Include(p => p.Photos.Where(photo => photo.IsMainCover))
             .ToListAsync();

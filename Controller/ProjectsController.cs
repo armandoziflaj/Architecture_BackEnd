@@ -10,9 +10,9 @@ public class ProjectsController (ProjectService projectService) : BaseApiControl
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     [HttpGet]
-    public async Task<IActionResult> GetCatalog([FromHeader(Name = "Accept-Language")] string lang = "en")
+    public async Task<IActionResult> GetCatalog(bool onlyFeatured = true,[FromHeader(Name = "Accept-Language")] string lang = "en")
     {
-        var catalog = await projectService.GetPortfolioCatalogAsync(lang);
+        var catalog = await projectService.GetPortfolioCatalogAsync(onlyFeatured, lang);
         return Ok(catalog);
     }
         
