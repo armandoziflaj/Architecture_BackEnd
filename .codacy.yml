@@ -1,2 +1,8 @@
 exclude_paths:
   - 'Migrations/**'
+  - '.claude/**'
+  - '.gemini/**'
+  - '.project-knowledge/**'
+  - 'CLAUDE.md'
+  - 'GEMINI.md'
+  - 'PROJECT_KNOWLEDGE.md'
