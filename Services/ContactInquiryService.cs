@@ -50,8 +50,10 @@ public class ContactInquiryService(AppDbContext context) : BaseService<ContactIn
             .Where(x => x.Id == id && !x.IsRead)
             .FirstOrDefaultAsync();
 
-        if (inquiry == null) 
+        if (inquiry == null)
+        {
             throw new NotFoundException($"Inquiry with ID {id} does not exist.");
+        }
 
         inquiry.IsRead = !inquiry.IsRead;
         inquiry.DateTimeUpdated = DateTime.UtcNow;

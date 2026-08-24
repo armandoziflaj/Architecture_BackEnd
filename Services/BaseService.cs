@@ -21,8 +21,10 @@ public abstract class BaseService<T>(AppDbContext context) where T : CommonData
     public virtual async Task<bool> DeleteAsync(long id)
     {
         var entity = await GetByIdAsync(id);
-        if (entity == null) 
+        if (entity == null)
+        {
             throw new NotFoundException("The entity you are trying to delete does not exist.");
+        }
         
         Context.Set<T>().Remove(entity);
         await Context.SaveChangesAsync();
