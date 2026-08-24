@@ -10,7 +10,11 @@ public class ModelValidationFilter : IActionFilter
     {
         foreach (var argument in context.ActionArguments.Values)
         {
-            if (argument != null) continue;
+            if (argument != null)
+            {
+                continue;
+            }
+
             context.Result = new BadRequestObjectResult(new BaseResponse<object>
             {
                 Success = false,

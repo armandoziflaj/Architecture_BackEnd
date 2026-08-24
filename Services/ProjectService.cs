@@ -147,56 +147,9 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
                 .FirstOrDefaultAsync(p => p.Id == dto.Id)
                 ?? throw new NotFoundException($"Project with ID {dto.Id} not found.");
 
-            project.Location = dto.Location;
-            project.CompletionYear = dto.CompletionYear;
-            project.Size = dto.Size;
-            project.IsFeatured = dto.IsFeatured;
-            project.CategoryId = dto.CategoryId;
-
-            project.Translations.Clear();
-            foreach (var transDto in dto.Translations)
-            {
-                project.Translations.Add(new ProjectTranslation
-                {
-                    LanguageCode = transDto.LanguageCode,
-                    Title = transDto.Title,
-                    Summary = transDto.Description
-                });
-            }
-
-            var retainedPhotoIds = dto.Photos.Where(p => p.Id.HasValue).Select(p => p.Id!.Value).ToList();
-            var photosToRemove = project.Photos.Where(p => !retainedPhotoIds.Contains(p.Id)).ToList();
-
-            foreach (var photo in photosToRemove)
-            {
-                DeleteImageFile(photo.ImageUrl);
-                Context.ProjectPhotos.Remove(photo);
-            }
-
-            foreach (var photoSpec in dto.Photos)
-            {
-                if (photoSpec.Id.HasValue)
-                {
-                    var existingPhoto = project.Photos.FirstOrDefault(p => p.Id == photoSpec.Id.Value);
-                    if (existingPhoto != null)
-                    {
-                        existingPhoto.DisplayOrder = photoSpec.DisplayOrder;
-                        existingPhoto.IsMainCover = (photoSpec.DisplayOrder == 1);
-                    }
-                }
-                else if (photoSpec.NewPhotoIndex.HasValue)
-                {
-                    var file = dto.NewPhotos[photoSpec.NewPhotoIndex.Value];
-                    var imageUrl = await SaveImageFileAsync(file);
-                    project.Photos.Add(new ProjectPhoto
-                    {
-                        ImageUrl = imageUrl,
-                        AltText = $"{dto.Location} Project Photo {photoSpec.DisplayOrder}",
-                        DisplayOrder = photoSpec.DisplayOrder,
-                        IsMainCover = (photoSpec.DisplayOrder == 1)
-                    });
-                }
-            }
+            ApplyProjectFields(project, dto);
+            ReplaceTranslations(project, dto);
+            await SyncPhotosAsync(project, dto);
 
             await Context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -208,6 +161,66 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
         }
     }
 
+    private static void ApplyProjectFields(Project project, UpdateProjectDto dto)
+    {
+        project.Location = dto.Location;
+        project.CompletionYear = dto.CompletionYear;
+        project.Size = dto.Size;
+        project.IsFeatured = dto.IsFeatured;
+        project.CategoryId = dto.CategoryId;
+    }
+
+    private static void ReplaceTranslations(Project project, UpdateProjectDto dto)
+    {
+        project.Translations.Clear();
+        foreach (var transDto in dto.Translations)
+        {
+            project.Translations.Add(new ProjectTranslation
+            {
+                LanguageCode = transDto.LanguageCode,
+                Title = transDto.Title,
+                Summary = transDto.Description
+            });
+        }
+    }
+
+    private async Task SyncPhotosAsync(Project project, UpdateProjectDto dto)
+    {
+        var retainedPhotoIds = dto.Photos.Where(p => p.Id.HasValue).Select(p => p.Id!.Value).ToList();
+        var photosToRemove = project.Photos.Where(p => !retainedPhotoIds.Contains(p.Id)).ToList();
+
+        foreach (var photo in photosToRemove)
+        {
+            DeleteImageFile(photo.ImageUrl);
+            Context.ProjectPhotos.Remove(photo);
+        }
+
+        foreach (var photoSpec in dto.Photos)
+        {
+            if (photoSpec.Id.HasValue)
+            {
+                var existingPhoto = project.Photos.FirstOrDefault(p => p.Id == photoSpec.Id.Value);
+                if (existingPhoto != null)
+                {
+                    existingPhoto.DisplayOrder = photoSpec.DisplayOrder;
+                    existingPhoto.IsMainCover = (photoSpec.DisplayOrder == 1);
+                }
+            }
+            else if (photoSpec.NewPhotoIndex.HasValue)
+            {
+                var file = dto.NewPhotos[photoSpec.NewPhotoIndex.Value];
+                var imageUrl = await SaveImageFileAsync(file);
+                project.Photos.Add(new ProjectPhoto
+                {
+                    ImageUrl = imageUrl,
+                    AltText = $"{dto.Location} Project Photo {photoSpec.DisplayOrder}",
+                    DisplayOrder = photoSpec.DisplayOrder,
+                    IsMainCover = (photoSpec.DisplayOrder == 1)
+                });
+            }
+        }
+    }
+
     public override async Task<bool> DeleteAsync(long id)
     {
         var project = await Context.Projects
@@ -215,7 +228,9 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (project == null)
+        {
             throw new NotFoundException($"Project with ID {id} does not exist.");
+        }
 
         foreach (var photo in project.Photos)
         {
@@ -265,7 +280,10 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
 
     private void DeleteImageFile(string? imageUrl)
     {
-        if (string.IsNullOrWhiteSpace(imageUrl)) return;
+        if (string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return;
+        }
 
         var relativePath = imageUrl.TrimStart('/');
         var fullPath = Path.Combine(environment.WebRootPath, relativePath);

@@ -16,7 +16,10 @@ public class ContactInquiriesController(ContactInquiryService inquiryService) : 
     [EnableRateLimiting("ContactFormPolicy")]
     public async Task<IActionResult> Submit([FromBody] ContactInquiryRequest inquiry)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
         await inquiryService.SubmitInquiryAsync(inquiry);
         return Ok();
