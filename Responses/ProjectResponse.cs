@@ -12,7 +12,7 @@ public class PhotosResponse
     public long Id { get; set; }
     public required string ImageUrl { get; set; }
     public string? AltText { get; set; }
-    public bool isCover { get; set; } = false;
+    public bool isCover { get; set; }
     public int DisplayOrder { get; set; }
 }
 

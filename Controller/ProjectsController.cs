@@ -76,7 +76,10 @@ public class ProjectsController (ProjectService projectService) : BaseApiControl
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> DeleteProject(long id)
     {
-        if (id == 0) return BadRequest("Missing the project Id");
+        if (id == 0)
+        {
+            return BadRequest("Missing the project Id");
+        }
         
         await projectService.DeleteAsync(id);
         return Ok();

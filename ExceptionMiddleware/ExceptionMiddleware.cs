@@ -38,14 +38,14 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
                 statusCode = HttpStatusCode.NotFound;
                 message = notFoundEx.Message;
                 break;
-        }
 
+            default:
+                // Unhandled exception types keep the generic 500 response; expose details only in DEBUG builds.
 #if DEBUG
-        if (exception is not (BadRequestException or NotFoundException))
-        {
-            message = exception.Message;
-        }
+                message = exception.Message;
 #endif
+                break;
+        }
 
         context.Response.StatusCode = (int)statusCode;
 

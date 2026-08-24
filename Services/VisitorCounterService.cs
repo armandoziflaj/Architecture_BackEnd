@@ -38,11 +38,11 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider,IConfigu
             counterService.SetInitialCount(initialCount);
         }
 
-        _timer = new Timer(UpdateVisitorCountInDatabase, null, TimeSpan.FromMinutes(_updateFrequency), TimeSpan.FromMinutes(_updateFrequency));
+        _timer = new Timer(_ => UpdateVisitorCountInDatabase(), null, TimeSpan.FromMinutes(_updateFrequency), TimeSpan.FromMinutes(_updateFrequency));
         return Task.CompletedTask;
     }
-    
-    private void UpdateVisitorCountInDatabase(object? state)
+
+    private void UpdateVisitorCountInDatabase()
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -68,7 +68,7 @@ public class VisitorCountUpdateService(IServiceProvider serviceProvider,IConfigu
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _timer?.Change(Timeout.Infinite, 0);
-        UpdateVisitorCountInDatabase(null);
+        UpdateVisitorCountInDatabase();
         return Task.CompletedTask;
     }
 
