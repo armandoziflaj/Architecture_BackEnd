@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
 using Sulozeqi_BackEnd.ExceptionMiddleware;
 using Sulozeqi_BackEnd.Models;
 using Sulozeqi_BackEnd.Requests;
@@ -269,11 +271,13 @@ public class ProjectService(AppDbContext context, IWebHostEnvironment environmen
             Directory.CreateDirectory(uploadsFolder);
         }
 
-        var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        var uniqueFileName = $"{Guid.NewGuid()}.webp";
         var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-        await using var stream = new FileStream(filePath, FileMode.Create);
-        await file.CopyToAsync(stream);
+        await using var inputStream = file.OpenReadStream();
+        using var image = await Image.LoadAsync(inputStream);
+
+        await image.SaveAsync(filePath, new WebpEncoder { Quality = 80 });
 
         return $"/uploads/projects/{uniqueFileName}";
     }
