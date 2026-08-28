@@ -1,6 +1,7 @@
 // Services/ContactInquiryService.cs
 using Microsoft.EntityFrameworkCore;
 using Sulozeqi_BackEnd.ExceptionMiddleware;
+using Sulozeqi_BackEnd.Extensions;
 using Sulozeqi_BackEnd.Models;
 using Sulozeqi_BackEnd.Requests;
 using Sulozeqi_BackEnd.Responses;
@@ -25,12 +26,23 @@ public class ContactInquiryService(AppDbContext context) : BaseService<ContactIn
         await Context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<ContactInquiryResponse>> GetAllInquiriesAsync()
+    public async Task<PagedResponse<ContactInquiryResponse>> GetInquiriesAsync(int page, int pageSize, bool onlyUnread)
     {
-        return await Context.ContactInquiries
-            .AsNoTracking()
-            .Where(x => !x.IsRead)
+        (page, pageSize) = PaginationExtensions.Normalize(page, pageSize);
+
+        var query = Context.ContactInquiries.AsNoTracking();
+
+        if (onlyUnread)
+        {
+            query = query.Where(x => !x.IsRead);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
             .OrderByDescending(x => x.DateTimeCreated)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(x => new ContactInquiryResponse
             {
                 Id = x.Id,
@@ -42,6 +54,14 @@ public class ContactInquiryService(AppDbContext context) : BaseService<ContactIn
                 CreatedAt = x.DateTimeCreated
             })
             .ToListAsync();
+
+        return new PagedResponse<ContactInquiryResponse>
+        {
+            Data = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<bool> ToggleReadStatusAsync(long id)

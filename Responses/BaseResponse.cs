@@ -1,6 +1,12 @@
 namespace Sulozeqi_BackEnd.Responses;
 
-public class BaseResponse<T>
+public interface IApiResponse
+{
+    bool Success { get; set; }
+    string Message { get; set; }
+}
+
+public class BaseResponse<T> : IApiResponse
 {
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;
