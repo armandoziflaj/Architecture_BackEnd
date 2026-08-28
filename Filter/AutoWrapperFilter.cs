@@ -10,8 +10,7 @@ public class AutoWrapperFilter : IAsyncResultFilter
     {
         if (context.Result is ObjectResult objectResult)
         {
-            var resultType = objectResult.Value?.GetType();
-            if (resultType != null && resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(BaseResponse<>))
+            if (objectResult.Value is IApiResponse)
             {
                 await next();
                 return;

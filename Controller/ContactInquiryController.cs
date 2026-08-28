@@ -26,9 +26,9 @@ public class ContactInquiriesController(ContactInquiryService inquiryService) : 
     }
 
     [HttpGet("admin/all")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20, bool onlyUnread = false)
     {
-        var inquiries = await inquiryService.GetAllInquiriesAsync();
+        var inquiries = await inquiryService.GetInquiriesAsync(page, pageSize, onlyUnread);
         return Ok(inquiries);
     }
 
@@ -37,5 +37,12 @@ public class ContactInquiriesController(ContactInquiryService inquiryService) : 
     {
         var currentStatus = await inquiryService.ToggleReadStatusAsync(id);
         return Ok(new { success = true, isRead = currentStatus });
+    }
+
+    [HttpDelete("admin/{id:long}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        await inquiryService.DeleteAsync(id);
+        return Ok();
     }
 }
